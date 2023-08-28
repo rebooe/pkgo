@@ -2,9 +2,9 @@ package gins
 
 import (
 	"net/http"
-	"pkg-go/e"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rebooe/pkg-go/e"
 )
 
 type Response struct {
