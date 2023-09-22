@@ -15,7 +15,7 @@ type Email struct {
 	auth     smtp.Auth // 邮件授权信息
 }
 
-func NewEmail(smtpHost string, from, pwd, fromName string) *Email {
+func New(smtpHost string, from, pwd, fromName string) *Email {
 	host, _, _ := strings.Cut(smtpHost, ":")
 	auth := smtp.PlainAuth("", from, pwd, host)
 

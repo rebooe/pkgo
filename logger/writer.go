@@ -8,22 +8,22 @@ import (
 	"time"
 )
 
-type RotateWrite struct {
+type rotateWrite struct {
 	writer io.WriteCloser
 	dir    string // 日志存放路径
 	date   string // 当前日期
 }
 
-func New(dir, tagName string) (io.Writer, error) {
+func NewRouterWriter(dir, tagName string) (io.Writer, error) {
 	dir = filepath.Join(dir, tagName)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return nil, err
 	}
 
-	return &RotateWrite{dir: dir}, nil
+	return &rotateWrite{dir: dir}, nil
 }
 
-func (w *RotateWrite) Write(p []byte) (int, error) {
+func (w *rotateWrite) Write(p []byte) (int, error) {
 	now := time.Now().Format("20060102")
 
 	if now != w.date {
