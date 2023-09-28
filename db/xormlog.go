@@ -3,10 +3,10 @@ package db
 import (
 	"fmt"
 	"log/slog"
-	"project/pkg/gins"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rebooe/pkg-go/logger"
 
 	xormlog "xorm.io/xorm/log"
 )
@@ -30,7 +30,7 @@ func (l *xormLogger) BeforeSQL(ctx xormlog.LogContext) {}
 func (l *xormLogger) AfterSQL(ctx xormlog.LogContext) {
 	SQL := ReplacePlaceholders(ctx.SQL, ctx.Args...)
 	if gctx, ok := ctx.Ctx.(*gin.Context); ok {
-		reqId := gins.GetReqId(gctx)
+		reqId := logger.GetReqId(gctx)
 		l.Infof("[%s][%v]%s", reqId, ctx.ExecuteTime, SQL)
 		return
 	}
