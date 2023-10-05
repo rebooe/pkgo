@@ -10,7 +10,7 @@ import (
 )
 
 type Cacher interface {
-	Get(string, any) (bool, error)
+	Get(string, any) (bool, time.Time, error)
 	Set(string, any, time.Duration) error
 	Delete(string) error
 }

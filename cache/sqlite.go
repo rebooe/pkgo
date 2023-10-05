@@ -37,7 +37,7 @@ func NewSqliteCacher(db *sql.DB, table string) (Cacher, error) {
 		return nil, err
 	}
 
-	getStmt, err := db.PrepareContext(context.TODO(), fmt.Sprintf("SELECT value FROM %s WHERE key = ? AND expire >= ?", table))
+	getStmt, err := db.PrepareContext(context.TODO(), fmt.Sprintf("SELECT value, expire FROM %s WHERE key = ? AND expire >= ?", table))
 	if err != nil {
 		return nil, err
 	}
@@ -63,22 +63,25 @@ func NewSqliteCacher(db *sql.DB, table string) (Cacher, error) {
 	}, nil
 }
 
-func (c *sqlCache) Get(key string, v any) (bool, error) {
-	var value []byte
-	err := c.getStmt.QueryRow(key, time.Now().Unix()).Scan(&value)
+func (c *sqlCache) Get(key string, v any) (bool, time.Time, error) {
+	var (
+		value  []byte
+		expire int64
+	)
+	err := c.getStmt.QueryRow(key, time.Now().Unix()).Scan(&value, &expire)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return false, nil
+			return false, time.Time{}, nil
 		}
-		return false, err
+		return false, time.Time{}, err
 	}
 
 	buf := bytes.NewBuffer(value)
 	decode := gob.NewDecoder(buf)
 	if err := decode.Decode(v); err != nil {
-		return false, err
+		return false, time.Time{}, err
 	}
-	return true, nil
+	return true, time.Unix(expire, 0), nil
 }
 
 func (c *sqlCache) Set(key string, value any, t time.Duration) error {

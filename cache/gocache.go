@@ -18,13 +18,13 @@ func NewGoCache() Cacher {
 	}
 }
 
-func (c *goCache) Get(key string, v any) (bool, error) {
-	value, exist := c.Cache.Get(key)
+func (c *goCache) Get(key string, v any) (bool, time.Time, error) {
+	value, expir, exist := c.GetWithExpiration(key)
 	if !exist {
-		return false, nil
+		return false, expir, nil
 	}
 	err := setValue(v, value)
-	return true, err
+	return true, expir, err
 }
 
 func (c *goCache) Set(key string, val any, duration time.Duration) error {
