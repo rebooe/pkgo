@@ -2,9 +2,8 @@ package e
 
 import (
 	"fmt"
-	"path/filepath"
-	"runtime"
-	"strings"
+
+	"github.com/rebooe/pkg-go/util"
 )
 
 // Warp 包装堆栈信息到错误
@@ -12,18 +11,14 @@ func Warp(err error) error {
 	if err == nil {
 		return nil
 	}
-	// 获取堆栈信息
-	pc, file, line, _ := runtime.Caller(1)
-	baseFile := filepath.Base(file)
-	Func := runtime.FuncForPC(pc)
-	pack, funcName, _ := strings.Cut(Func.Name(), ".")
-
-	return fmt.Errorf("%s/%s:%d %s()\n%w", pack, baseFile, line, funcName, err)
+	s, _ := util.Caller(1)
+	return fmt.Errorf("%s\n%w", s, err)
 }
 
 // Warpf 包装堆栈信息到格式化错误
 func Warpf(format string, args ...any) error {
-	return Warp(fmt.Errorf(format, args...))
+	s, _ := util.Caller(1)
+	return fmt.Errorf("%s\n%w", s, fmt.Errorf(format, args...))
 }
 
 // Cause 返回根错误
