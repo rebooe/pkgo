@@ -3,7 +3,7 @@ package e
 import (
 	"fmt"
 
-	"github.com/rebooe/pkg-go/util"
+	pkgo "github.com/rebooe/pkg-go"
 )
 
 // Warp 包装堆栈信息到错误
@@ -11,13 +11,13 @@ func Warp(err error) error {
 	if err == nil {
 		return nil
 	}
-	s, _ := util.Caller(1)
+	s, _ := pkgo.Caller(1)
 	return fmt.Errorf("%s\n%w", s, err)
 }
 
 // Warpf 包装堆栈信息到格式化错误
 func Warpf(format string, args ...any) error {
-	s, _ := util.Caller(1)
+	s, _ := pkgo.Caller(1)
 	return fmt.Errorf("%s\n%w", s, fmt.Errorf(format, args...))
 }
 

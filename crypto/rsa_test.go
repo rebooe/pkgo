@@ -11,66 +11,30 @@ var (
 )
 
 func TestParsePublicKey(t *testing.T) {
-	type args struct {
-		key string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		{
-			args: args{
-				key: pubKey,
-			},
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := ParsePublicKey(tt.args.key)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ParsePublicKey() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			t.Logf("%v", got)
-		})
-	}
-}
-
-func TestParsePrivateKey(t *testing.T) {
-	type args struct {
-		key string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		{
-			args: args{
-				key: privKey,
-			},
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := ParsePrivateKey(tt.args.key)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ParsePrivateKey() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			t.Logf("%v", got)
-		})
-	}
-}
-
-func TestEncrypt(t *testing.T) {
-	key, err := ParsePublicKey(pubKey)
+	parse := ParseRsaKey{}
+	key, err := parse.DecodeBase64(pubKey).ToPublicKey()
 	if err != nil {
 		t.Fatal(err)
 	}
+	t.Log(key)
+}
+
+func TestParsePrivateKey(t *testing.T) {
+	parse := ParseRsaKey{}
+	key, err := parse.DecodeBase64(privKey).ToPrivateKey()
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(key)
+}
+
+func TestEncrypt(t *testing.T) {
+	parse := ParseRsaKey{}
+	key, err := parse.DecodeBase64(pubKey).ToPublicKey()
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	res, err := RSAEncrypt(key, []byte(`abc`))
 	if err != nil {
 		t.Fatal(err)
@@ -84,10 +48,13 @@ func TestDecrypt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	key, err := ParsePrivateKey(privKey)
+
+	parse := ParseRsaKey{}
+	key, err := parse.DecodeBase64(privKey).ToPrivateKey()
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	res, err := RSADecrypt(key, text)
 	if err != nil {
 		t.Fatal(err)

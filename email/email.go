@@ -5,7 +5,7 @@ import (
 	"net/smtp"
 	"strings"
 
-	"github.com/rebooe/pkg-go/util"
+	pkgo "github.com/rebooe/pkg-go"
 )
 
 type Email struct {
@@ -30,5 +30,5 @@ func New(smtpHost string, from, pwd, fromName string) *Email {
 func (em *Email) SendMail(to []string, subject string, body string) error {
 	message := fmt.Sprintf("From: %s <%s>\r\nSubject: %s\r\n\r\n%s",
 		em.fromName, em.from, subject, body)
-	return smtp.SendMail(em.smtpHost, em.auth, em.from, to, util.StringToBytes(message))
+	return smtp.SendMail(em.smtpHost, em.auth, em.from, to, pkgo.StringToBytes(message))
 }

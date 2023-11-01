@@ -1,4 +1,4 @@
-package util
+package pkgo
 
 import (
 	"testing"

@@ -22,9 +22,7 @@ type sqlCache struct {
 	autoDeleteStmt *sql.Stmt
 }
 
-var _ Cacher = (*sqlCache)(nil)
-
-func NewSqliteCacher(db *sql.DB, table string) (Cacher, error) {
+func NewSqliteCache(db *sql.DB, table string) (Cacher, error) {
 	_, err := db.Exec(fmt.Sprintf(`
 		CREATE TABLE IF NOT EXISTS %s (
 			"key" TEXT NOT NULL,

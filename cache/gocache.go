@@ -10,8 +10,6 @@ type goCache struct {
 	*cache.Cache
 }
 
-var _ Cacher = (*goCache)(nil)
-
 func NewGoCache() Cacher {
 	return &goCache{
 		Cache: cache.New(5*time.Minute, 10*time.Minute),
