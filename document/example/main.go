@@ -36,6 +36,6 @@ func main() {
 		}{}),
 	)
 
-	http.Handle("/", doc)
+	http.Handle("/doc/", http.StripPrefix("/doc", doc.Handler()))
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

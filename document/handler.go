@@ -18,17 +18,12 @@ type response struct {
 	Data any
 }
 
-func (doc *Document) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	switch r.URL.Path {
-	case "/":
-		doc.index(w, r)
-	case "/nav":
-		doc.navigator(w, r)
-	case "/info":
-		doc.docinfo(w, r)
-	default:
-		fmt.Fprintf(w, "请求错误 %s", r.URL.Path)
-	}
+func (doc *Document) Handler() http.Handler {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/nav", doc.navigator)
+	mux.HandleFunc("/info", doc.docinfo)
+	mux.HandleFunc("/", doc.index)
+	return mux
 }
 
 func (doc *Document) index(w http.ResponseWriter, r *http.Request) {
