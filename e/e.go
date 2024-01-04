@@ -2,24 +2,10 @@ package e
 
 import (
 	"fmt"
+	"strings"
 
 	pkgo "github.com/rebooe/pkg-go"
 )
-
-// Warp 包装堆栈信息到错误
-func Warp(err error) error {
-	if err == nil {
-		return nil
-	}
-	s, _ := pkgo.Caller(1)
-	return fmt.Errorf("%s\n%w", s, err)
-}
-
-// Warpf 包装堆栈信息到格式化错误
-func Warpf(format string, args ...any) error {
-	s, _ := pkgo.Caller(1)
-	return fmt.Errorf("%s\n%w", s, fmt.Errorf(format, args...))
-}
 
 // Cause 返回根错误
 func Cause(err error) error {
@@ -33,4 +19,43 @@ func Cause(err error) error {
 			return nil
 		}
 	}
+}
+
+type myErr struct {
+	callers []string // 堆栈信息
+	err     error
+}
+
+func (e *myErr) Error() string {
+	return fmt.Sprintf("%s\n%s", strings.Join(e.callers, "\n"), e.err)
+}
+
+func (e *myErr) Unwrap() error {
+	return e.err
+}
+
+// Warp 包装错误
+//
+//	err 原始错误
+//	msg 额外信息
+func Warp(err error, msg ...string) error {
+	if err == nil {
+		return nil
+	}
+
+	s, _ := pkgo.Caller(1)
+	e, ok := err.(*myErr)
+	if ok {
+		e.callers = append(e.callers, s)
+	} else {
+		e = &myErr{
+			callers: []string{s},
+			err:     err,
+		}
+	}
+
+	if len(msg) > 0 {
+		e.err = fmt.Errorf("%s: %s", msg[0], e.err)
+	}
+	return e
 }
