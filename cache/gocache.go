@@ -42,9 +42,9 @@ type gocacheValue struct {
 	exist bool
 }
 
-func (v *gocacheValue) ToAny() (any, error) { return v.v, v.Err() }
+func (v *gocacheValue) Any() (any, error) { return v.v, v.Err() }
 
-func (v *gocacheValue) ToInt() (int, error) {
+func (v *gocacheValue) Int() (int, error) {
 	if !v.exist {
 		return 0, nil
 	}
@@ -56,7 +56,7 @@ func (v *gocacheValue) ToInt() (int, error) {
 	return to, nil
 }
 
-func (v *gocacheValue) ToFloat() (float64, error) {
+func (v *gocacheValue) Float() (float64, error) {
 	if !v.exist {
 		return 0.0, nil
 	}
@@ -68,7 +68,7 @@ func (v *gocacheValue) ToFloat() (float64, error) {
 	return to, nil
 }
 
-func (v *gocacheValue) ToString() (string, error) {
+func (v *gocacheValue) String() (string, error) {
 	if !v.exist {
 		return "", nil
 	}
@@ -80,7 +80,7 @@ func (v *gocacheValue) ToString() (string, error) {
 	return to, nil
 }
 
-func (v *gocacheValue) ToByte() ([]byte, error) {
+func (v *gocacheValue) Byte() ([]byte, error) {
 	if !v.exist {
 		return nil, nil
 	}
