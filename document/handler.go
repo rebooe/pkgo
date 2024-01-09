@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
+	"sort"
 	"strings"
 )
 
@@ -44,6 +45,11 @@ func (doc *Document) navigator(w http.ResponseWriter, r *http.Request) {
 	for k, v := range doc.info {
 		res = append(res, navigatorRes{Name: v.Name, Api: k})
 	}
+
+	// 对接口排序
+	sort.Slice(res, func(i, j int) bool {
+		return res[i].Api < res[j].Api
+	})
 
 	encode := json.NewEncoder(w)
 	encode.Encode(&response{Code: 0, Data: res})
