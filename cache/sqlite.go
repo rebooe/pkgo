@@ -22,7 +22,7 @@ type sqlCache struct {
 	autoDeleteStmt *sql.Stmt
 }
 
-func NewSqliteCache(db *sql.DB, table string) (*sqlCache, error) {
+func NewSqliteCache(db *sql.DB, table string) (Cacher, error) {
 	_, err := db.Exec(fmt.Sprintf(`
 		CREATE TABLE IF NOT EXISTS %s (
 			"key" TEXT NOT NULL,
@@ -61,7 +61,7 @@ func NewSqliteCache(db *sql.DB, table string) (*sqlCache, error) {
 	}, nil
 }
 
-func (c *sqlCache) Get(key string, v any) (bool, time.Time, error) {
+func (c *sqlCache) Get(key string) Valuer {
 	var (
 		value  []byte
 		expire int64
@@ -69,17 +69,11 @@ func (c *sqlCache) Get(key string, v any) (bool, time.Time, error) {
 	err := c.getStmt.QueryRow(key, time.Now().Unix()).Scan(&value, &expire)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return false, time.Time{}, nil
+			return &sqliteValue{}
 		}
-		return false, time.Time{}, err
+		return &sqliteValue{err: err}
 	}
-
-	buf := bytes.NewBuffer(value)
-	decode := gob.NewDecoder(buf)
-	if err := decode.Decode(v); err != nil {
-		return false, time.Time{}, err
-	}
-	return true, time.Unix(expire, 0), nil
+	return &sqliteValue{value: value, expire: expire}
 }
 
 func (c *sqlCache) Set(key string, value any, t time.Duration) error {
@@ -105,4 +99,53 @@ func (c *sqlCache) Delete(key string) error {
 
 func (c *sqlCache) autoDelete() {
 	c.autoDeleteStmt.Exec(time.Now().Unix())
+}
+
+type sqliteValue struct {
+	value  []byte
+	expire int64
+	err    error
+}
+
+func (v *sqliteValue) ToAny() (any, error) {
+	return v.value, nil
+}
+
+func (v *sqliteValue) ToInt() (int, error) {
+	buf := bytes.NewBuffer(v.value)
+	decode := gob.NewDecoder(buf)
+
+	var i int
+	err := decode.Decode(&i)
+	return i, err
+}
+
+func (v *sqliteValue) ToFloat() (float64, error) {
+	buf := bytes.NewBuffer(v.value)
+	decode := gob.NewDecoder(buf)
+
+	var i float64
+	err := decode.Decode(&i)
+	return i, err
+}
+
+func (v *sqliteValue) ToString() (string, error) {
+	buf := bytes.NewBuffer(v.value)
+	decode := gob.NewDecoder(buf)
+
+	var i string
+	err := decode.Decode(&i)
+	return i, err
+}
+
+func (v *sqliteValue) ToByte() ([]byte, error) {
+	return v.value, nil
+}
+
+func (v *sqliteValue) Err() error {
+	return v.err
+}
+
+func (v *sqliteValue) Expir() time.Time {
+	return time.Unix(v.expire, 0)
 }
