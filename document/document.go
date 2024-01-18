@@ -24,16 +24,10 @@ type Info struct {
 }
 
 func NewDocument(open bool) *Document {
-	doc := &Document{
+	return &Document{
 		open: open,
 		info: make(map[string]Info),
 	}
-
-	// 对接口排序
-	// sort.Slice(doc.dirs, func(i, j int) bool {
-	// 	return doc.dirs[i].Api < doc.dirs[j].Api
-	// })
-	return doc
 }
 
 type WithDocument func(*Info)

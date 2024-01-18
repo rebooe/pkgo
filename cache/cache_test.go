@@ -5,6 +5,8 @@ import (
 	"log"
 	"testing"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 )
 
 type test struct {
@@ -18,7 +20,7 @@ func testCache(c Cacher) error {
 		return err
 	}
 
-	value, err := c.Get("test").ToAny()
+	value, err := c.Get("test").Any()
 	if err != nil {
 		return err
 	}
@@ -37,6 +39,16 @@ func testCache(c Cacher) error {
 
 func Test_goCache(t *testing.T) {
 	c := NewGoCache()
+	if err := testCache(c); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func Test_redisCache(t *testing.T) {
+	c := NewRedisCache(&redis.Options{
+		Addr: "127.0.0.1:6379",
+		DB:   0,
+	})
 	if err := testCache(c); err != nil {
 		t.Fatal(err)
 	}

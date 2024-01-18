@@ -14,11 +14,11 @@ type Cacher interface {
 }
 
 type Valuer interface {
-	ToAny() (any, error)
-	ToInt() (int, error)
-	ToFloat() (float64, error)
-	ToString() (string, error)
-	ToByte() ([]byte, error)
+	Any() (any, error)
+	Int() (int, error)
+	Float() (float64, error)
+	String() (string, error)
+	Byte() ([]byte, error)
 
 	Err() error
 	Expir() time.Time

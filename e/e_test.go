@@ -1,11 +1,12 @@
 package e
 
 import (
+	"errors"
 	"testing"
 )
 
 func TestNew(t *testing.T) {
-	err := Warpf("123")
+	err := Warp(errors.New("err"), "123")
 	t.Logf("%s", err)
 
 	err = Warp(err)
