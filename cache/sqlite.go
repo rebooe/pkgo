@@ -107,11 +107,11 @@ type sqliteValue struct {
 	err    error
 }
 
-func (v *sqliteValue) ToAny() (any, error) {
+func (v *sqliteValue) Any() (any, error) {
 	return v.value, nil
 }
 
-func (v *sqliteValue) ToInt() (int, error) {
+func (v *sqliteValue) Int() (int, error) {
 	buf := bytes.NewBuffer(v.value)
 	decode := gob.NewDecoder(buf)
 
@@ -120,7 +120,7 @@ func (v *sqliteValue) ToInt() (int, error) {
 	return i, err
 }
 
-func (v *sqliteValue) ToFloat() (float64, error) {
+func (v *sqliteValue) Float() (float64, error) {
 	buf := bytes.NewBuffer(v.value)
 	decode := gob.NewDecoder(buf)
 
@@ -129,7 +129,7 @@ func (v *sqliteValue) ToFloat() (float64, error) {
 	return i, err
 }
 
-func (v *sqliteValue) ToString() (string, error) {
+func (v *sqliteValue) String() (string, error) {
 	buf := bytes.NewBuffer(v.value)
 	decode := gob.NewDecoder(buf)
 
@@ -138,7 +138,7 @@ func (v *sqliteValue) ToString() (string, error) {
 	return i, err
 }
 
-func (v *sqliteValue) ToByte() ([]byte, error) {
+func (v *sqliteValue) Byte() ([]byte, error) {
 	return v.value, nil
 }
 
