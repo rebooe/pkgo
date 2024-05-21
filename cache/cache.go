@@ -1,10 +1,7 @@
 package cache
 
 import (
-	"context"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 type Cacher interface {
@@ -24,16 +21,3 @@ type Valuer interface {
 	Expir() time.Time
 }
 
-const cacheKey = "cache/cacheKey"
-
-// 设置缓存到上下文
-func SetCache(cacher Cacher) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Set(cacheKey, cacher)
-	}
-}
-
-// 从上下文中获取缓存
-func GetCache(c context.Context) Cacher {
-	return c.Value(cacheKey).(Cacher)
-}

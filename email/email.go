@@ -5,7 +5,7 @@ import (
 	"net/smtp"
 	"strings"
 
-	pkgo "github.com/rebooe/pkg-go"
+	"github.com/rebooe/pkgo"
 )
 
 type Email struct {

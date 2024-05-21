@@ -5,9 +5,6 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/gin-gonic/gin"
-	"github.com/rebooe/pkg-go/logger"
-
 	xormlog "xorm.io/xorm/log"
 )
 
@@ -29,28 +26,29 @@ func (l *xormLogger) BeforeSQL(ctx xormlog.LogContext) {}
 
 func (l *xormLogger) AfterSQL(ctx xormlog.LogContext) {
 	SQL := ReplacePlaceholders(ctx.SQL, ctx.Args...)
-	if gctx, ok := ctx.Ctx.(*gin.Context); ok {
-		reqId := logger.GetReqId(gctx)
-		l.Infof("[%s][%v]%s", reqId, ctx.ExecuteTime, SQL)
+	v := ctx.Ctx.Value(xormlog.SessionIDKey)
+	if key, ok := v.(string); ok {
+		logWith := l.log.With("RID", key)
+		logWith.Info(SQL, "exectime", ctx.ExecuteTime)
 		return
 	}
-	l.Infof("[%v]%s", ctx.ExecuteTime, SQL)
+	l.log.Info(SQL, "exectime", ctx.ExecuteTime)
 }
 
 func (l *xormLogger) Debugf(format string, v ...any) {
-	l.log.Debug(format, v...)
+	l.log.Debug(fmt.Sprintf(format, v...))
 }
 
 func (l *xormLogger) Infof(format string, v ...any) {
-	l.log.Info(format, v...)
+	l.log.Info(fmt.Sprintf(format, v...))
 }
 
 func (l *xormLogger) Warnf(format string, v ...any) {
-	l.log.Warn(format, v...)
+	l.log.Warn(fmt.Sprintf(format, v...))
 }
 
 func (l *xormLogger) Errorf(format string, v ...any) {
-	l.log.Error(format, v...)
+	l.log.Error(fmt.Sprintf(format, v...))
 }
 
 func (l *xormLogger) Level() xormlog.LogLevel         { return l.logLevel }

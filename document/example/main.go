@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/rebooe/pkg-go/document"
+	"github.com/rebooe/pkgo/document"
 )
 
 func main() {
