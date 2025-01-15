@@ -18,12 +18,17 @@ const (
 
 // 获取请求id
 func GetReqId(c *gin.Context) string {
-	reqId := c.GetString(reqIdKey)
-	if reqId == "" {
-		reqId = strconv.FormatInt(time.Now().UnixNano(), 36)
-		c.Set(reqIdKey, reqId)
+	return c.GetString(reqIdKey)
+}
+
+// 设置请求id
+func SetReqId() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		reqId := strconv.FormatInt(time.Now().UnixNano(), 36)
+		ctx.Set(reqIdKey, reqId)
+		// 在响应头中也添加请求 ID
+		ctx.Header("X-Request-ID", reqId)
 	}
-	return reqId
 }
 
 func SetLogger(log *slog.Logger) gin.HandlerFunc {

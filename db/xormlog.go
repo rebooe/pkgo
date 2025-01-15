@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rebooe/pkg-go/logger"
+	"github.com/rebooe/pkgo/logger"
 
 	xormlog "xorm.io/xorm/log"
 )

@@ -1,4 +1,4 @@
-module github.com/rebooe/pkg-go
+module github.com/rebooe/pkgo
 
 go 1.21
 

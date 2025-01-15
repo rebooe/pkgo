@@ -1,8 +1,6 @@
 package gis
 
 import (
-	"encoding/json"
-	"os"
 	"regexp"
 	"testing"
 	"time"
@@ -45,43 +43,6 @@ func TestFindString(t *testing.T) {
 	complie := regexp.MustCompile(`POINT.+\((.*)\ (.*)\)`)
 	res := complie.FindStringSubmatch("POINT (104.034114 34.439662)")
 	t.Logf("%v", res)
-}
-
-func TestTrajects(t *testing.T) {
-	body, err := os.ReadFile("traject.json")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	var trajects []Traject
-	if err := json.Unmarshal(body, &trajects); err != nil {
-		t.Fatal(err)
-	}
-
-	t.Logf("原长度：%d", len(trajects))
-	trajects = SimpleTraject(trajects)
-	// t.Logf("简化结果：%v", trajects)
-	t.Logf("简化后长度：%d", len(trajects))
-}
-
-func TestContains(t *testing.T) {
-	g := NewGeos()
-	if err := g.LoadGeoJson("polygon.json"); err != nil {
-		t.Fatal(err)
-	}
-
-	body, err := os.ReadFile("traject2.json")
-	if err != nil {
-		t.Fatal(err)
-	}
-	var trajects []Traject
-	if err := json.Unmarshal(body, &trajects); err != nil {
-		t.Fatal(err)
-	}
-
-	t.Logf("优化前轨迹数量：%d", len(trajects))
-	trajects = SimpleTraject(trajects) // 优化轨迹
-	t.Logf("优化后轨迹数量：%d", len(trajects))
 }
 
 func TestStatis(t *testing.T) {

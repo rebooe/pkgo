@@ -95,3 +95,5 @@ func (v *gocacheValue) Byte() ([]byte, error) {
 func (v *gocacheValue) Err() error { return nil }
 
 func (v *gocacheValue) Expir() time.Time { return v.expir }
+
+func (v *gocacheValue) Exists() bool { return v.exist }

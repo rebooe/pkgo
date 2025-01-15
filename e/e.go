@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	pkgo "github.com/rebooe/pkg-go"
+	"github.com/rebooe/pkgo"
 )
 
 // Cause 返回根错误

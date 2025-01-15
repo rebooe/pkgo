@@ -20,8 +20,9 @@ type Valuer interface {
 	String() (string, error)
 	Byte() ([]byte, error)
 
-	Err() error
+	Exists() bool
 	Expir() time.Time
+	Err() error
 }
 
 const cacheKey = "cache/cacheKey"
