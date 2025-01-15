@@ -65,3 +65,7 @@ func (v *redisValue) Err() error {
 func (v *redisValue) Expir() time.Time {
 	return v.expir
 }
+
+func (v *redisValue) Exists() bool {
+	return v.cmd.Val() != ""
+}

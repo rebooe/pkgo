@@ -149,3 +149,7 @@ func (v *sqliteValue) Err() error {
 func (v *sqliteValue) Expir() time.Time {
 	return time.Unix(v.expire, 0)
 }
+
+func (v *sqliteValue) Exists() bool {
+	return v.expire > time.Now().Unix()
+}
