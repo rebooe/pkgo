@@ -1,40 +1,35 @@
 package cache
 
 import (
-	"context"
+	"errors"
 	"time"
 
-	"github.com/gin-gonic/gin"
+	"github.com/eko/gocache/lib/v4/store"
+	gocache_store "github.com/eko/gocache/store/go_cache/v4"
+	redis_store "github.com/eko/gocache/store/redis/v4"
+	gocache "github.com/patrickmn/go-cache"
+	"github.com/redis/go-redis/v9"
 )
 
-type Cacher interface {
-	Get(string) Valuer
-	Set(string, any, time.Duration) error
-	Delete(string) error
+type CacheConfig struct {
+	Type      string `yaml:"Type"`      // 缓存类型(store:本地缓存,redis:redis缓存)
+	RedisAddr string `yaml:"RedisAddr"` // redis地址
+	RedisPwd  string `yaml:"RedisPwd"`  // redis密码
+	RedisDB   int    `yaml:"RedisDB"`   // redis数据库
 }
 
-type Valuer interface {
-	Any() (any, error)
-	Int() (int, error)
-	Float() (float64, error)
-	String() (string, error)
-	Byte() ([]byte, error)
-
-	Exists() bool
-	Expir() time.Time
-	Err() error
-}
-
-const cacheKey = "cache/cacheKey"
-
-// 设置缓存到上下文
-func SetCache(cacher Cacher) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Set(cacheKey, cacher)
+func NewCache(config *CacheConfig) (store.StoreInterface, error) {
+	switch config.Type {
+	case "store":
+		gocacheClient := gocache.New(5*time.Minute, 10*time.Minute)
+		return gocache_store.NewGoCache(gocacheClient), nil
+	case "redis":
+		return redis_store.NewRedis(
+			redis.NewClient(&redis.Options{
+				Addr:     config.RedisAddr,
+				Password: config.RedisPwd,
+				DB:       config.RedisDB,
+			})), nil
 	}
-}
-
-// 从上下文中获取缓存
-func GetCache(c context.Context) Cacher {
-	return c.Value(cacheKey).(Cacher)
+	return nil, errors.New("cache type not found")
 }
