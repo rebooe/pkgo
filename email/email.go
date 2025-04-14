@@ -8,6 +8,10 @@ import (
 	"github.com/rebooe/pkgo"
 )
 
+type EmailService interface {
+	SendMail(to []string, subject string, body string) error
+}
+
 type Email struct {
 	smtpHost string    // 邮件服务地址
 	from     string    // 发件人邮箱
