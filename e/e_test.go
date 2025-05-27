@@ -6,9 +6,9 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	err := Warp(errors.New("err"), "123")
+	err := Wrap(errors.New("err"), "123")
 	t.Logf("%s", err)
 
-	err = Warp(err)
+	err = Wrap(err)
 	t.Logf("%s", err)
 }

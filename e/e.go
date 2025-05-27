@@ -34,11 +34,11 @@ func (e *myErr) Unwrap() error {
 	return e.err
 }
 
-// Warp 包装错误
+// Wrap 包装错误
 //
 //	err 原始错误
 //	msg 额外信息
-func Warp(err error, msg ...string) error {
+func Wrap(err error, msg ...string) error {
 	if err == nil {
 		return nil
 	}
